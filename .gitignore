@@ -1,53 +1,54 @@
-local beeEventFolder = Instance.new("Folder", game.ReplicatedStorage)
-beeEventFolder.Name = "BeeEvents"
+-- Load the Arceus X UI Library
+local ArceusUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/SPDM-Team/ArceusX-V3-Scripts/main/ArceusUI.lua"))()
 
-local beeEventBindable = Instance.new("BindableEvent", beeEventFolder)
-beeEventBindable.Name = "OnNewBeeEvent"
+-- Set up the UI title and logo
+ArceusUI:SetTitle("Arceus X Admin Panel")
+ArceusUI:SetLogo("ArceusLogo.png", "https://www.roblox.com/asset/?id=1234567890")  -- Replace with your logo URL
 
--- Fake Bee Event Data (can be replaced with actual database or webhook logic)
-local beeEvents = {
-	{ name = "Honey Harvest", time = 10 }, -- every 10 seconds
-	{ name = "Queen Bee Parade", time = 20 },
-	{ name = "Buzz Bonus", time = 30 },
-	{ name = "Golden Nectar Drop", time = 45 }
-}
-
-local eventIndex = 1
-
--- Function to trigger next bee event
-local function triggerNextBeeEvent()
-	local event = beeEvents[eventIndex]
-	if not event then return end
-
-	local newEvent = Instance.new("StringValue")
-	newEvent.Name = event.name
-	newEvent.Parent = beeEventFolder
-
-	print("[BEE EVENT] New Event:", event.name)
-	beeEventBindable:Fire(event.name) -- Notify clients or other scripts
-
-	eventIndex += 1
-	if eventIndex > #beeEvents then
-		eventIndex = 1 -- Loop through events
-	end
-
-	task.delay(event.time, triggerNextBeeEvent)
+-- Function to add command buttons
+local function addCommandButton(name, command)
+    ArceusUI:AddButton(name, function()
+        loadstring(command)()
+    end)
 end
 
--- Start the first event
-triggerNextBeeEvent()
-local beeEventFolder = game.ReplicatedStorage:WaitForChild("BeeEvents")
-local beeEventBindable = beeEventFolder:WaitForChild("OnNewBeeEvent")
+-- List of command names and their corresponding scripts
+local commands = {
+    {"ESP", "game:GetService('Players').LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(0, 100, 0))"},
+    {"God Mode", "game.Players.LocalPlayer.Character.Humanoid.Health = math.huge"},
+    {"Aimbot", "print('Aimbot activated')"},
+    {"Fly", "print('Fly mode activated')"},
+    {"Walk Speed", "game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 100"},
+    {"Speed Boost", "game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 200"},
+    {"Btools", "print('Building tools enabled')"},
+    {"Fling", "print('Fling activated')"},
+    {"Fire Gun", "print('Fire Gun command executed')"},
+    {"Fake Lag", "print('Fake Lag command executed')"},
+    {"Freeze", "print('Freeze command executed')"},
+    {"Kill All", "for _, player in pairs(game.Players:GetPlayers()) do player.Character:BreakJoints() end"},
+    {"Invisibility", "game.Players.LocalPlayer.Character.HumanoidRootPart.Transparency = 1"},
+    {"Morph", "print('Morph command executed')"},
+    {"TP to Player", "game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -10)"},
+    {"Spawn Vehicle", "print('Spawn Vehicle command executed')"},
+    {"Kick Player", "game.Players.LocalPlayer:Kick('You have been kicked')"},
+    {"Ban Player", "print('Ban Player command executed')"},
+    {"Teleport", "game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(Vector3.new(0, 50, 0))"},
+    {"Noclip", "print('Noclip activated')"},
+    {"Clear Inventory", "print('Inventory cleared')"},
+    {"Rejoin", "game:GetService('TeleportService'):Teleport(game.PlaceId, game.Players.LocalPlayer)"},
+    {"No Hunger", "print('No Hunger command executed')"},
+    {"No Thirst", "print('No Thirst command executed')"},
+    {"Server Lag", "print('Server Lag command executed')"},
+    {"Crash Server", "for _, player in pairs(game.Players:GetPlayers()) do player:Kick('Server is crashing') end"},
+    {"Time Day", "game.Lighting.TimeOfDay = '14:00:00'"},
+    {"Time Night", "game.Lighting.TimeOfDay = '02:00:00'"},
+    {"Gravity", "game.Workspace.Gravity = 50"}
+}
 
-beeEventBindable.Event:Connect(function(eventName)
-	warn("[CLIENT] Bee Event Started:", eventName)
+-- Add each command button to the UI
+for _, cmd in ipairs(commands) do
+    addCommandButton(cmd[1], cmd[2])
+end
 
-	-- Example: Show UI message or boost plants
-	local StarterGui = game:GetService("StarterGui")
-	StarterGui:SetCore("ChatMakeSystemMessage", {
-		Text = "🐝 BEE EVENT: " .. eventName .. " is now active!";
-		Color = Color3.fromRGB(255, 223, 0);
-		Font = Enum.Font.SourceSansBold;
-		TextSize = 22;
-	})
-end)
+-- Start the UI
+ArceusUI:Start()
