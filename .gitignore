@@ -1,18 +1,73 @@
-# Build and Release Folders
-bin-debug/
-bin-release/
-[Oo]bj/
-[Bb]in/
+-- Load Orion Library
+local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/OrionDev/Orion/main/Source/Orion.lua"))()
 
-# Other files and folders
-.settings/
+-- Create the UI window
+local Window = OrionLib:MakeWindow({Name = "Garden Script", HidePremium = false})
 
-# Executables
-*.swf
-*.air
-*.ipa
-*.apk
+-- Auto Farm Function
+local autoFarm = false
+local money = 0
+local petHeld = nil
+local farmButton
 
-# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
-# should NOT be excluded as they contain compiler settings and other important
-# information for Eclipse / Flash Builder.
+local function StartAutoFarm()
+    while autoFarm do
+        -- Find your farmable objects and start auto farming here
+        -- Example: Collect crops, flowers, etc.
+        print("Farming...")
+
+        -- Add your code for farming crops here, like collecting or replanting
+        wait(1) -- Wait for a second between actions
+    end
+end
+
+-- Money Duplication Function
+local function DuplicateMoney()
+    if petHeld then
+        -- Check if the pet is the correct one for duplication
+        if petHeld.Name == "RandomPet" then
+            -- Duplicate money logic here
+            money = money * 2 -- Example logic: Double the money
+            print("Money duplicated: " .. money)
+        end
+    end
+end
+
+-- UI Buttons
+local Section = Window:MakeTab({
+    Name = "Features",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+Section:AddButton({
+    Name = "Toggle Auto Farm",
+    Callback = function()
+        autoFarm = not autoFarm
+        if autoFarm then
+            farmButton:SetText("Stop Auto Farm")
+            StartAutoFarm()
+        else
+            farmButton:SetText("Start Auto Farm")
+        end
+    end
+})
+
+-- Add a button to duplicate money when the right pet is held
+Section:AddButton({
+    Name = "Duplicate Money (Hold Pet)",
+    Callback = function()
+        -- Check for random pet (example)
+        local pets = game.Players.LocalPlayer.Backpack:GetChildren()
+        for _, pet in ipairs(pets) do
+            if pet:IsA("Model") and pet.Name == "RandomPet" then
+                petHeld = pet
+                DuplicateMoney()
+                break
+            end
+        end
+    end
+})
+
+-- Display the window
+OrionLib:Init()
